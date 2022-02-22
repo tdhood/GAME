@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <title>Game Time!</title>
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <button type="button" onclick="startGame()">START!</button>
+    <div id="info-header" style="border: 1px solid black; width: 400px; margin-bottom: 10px;">
+        <span id="high-score" style="display: inline-block; margin: 5px 10px;">Current Score: 0</span>
+        <span id="clock" style="display: inline-block; margin: 5px 10px;">Time: 30 seconds</span> 
+    </div>
+    <div id="game-board" style="border: 1px solid black; height: 400px; width: 400px; position: relative;">
+        <div id="target-1" 
+            style="border: 1px solid black; height: 20px; width: 20px; position: absolute">
+        </div>
+    </div>
+    <script>
+        let intervalId;
+
+        function startGame() {
+            intervalId = setInterval(tick, 1000);
+        }
+        let timer = 5;
+        function tick() {
+            if (!timer) {
+                gameOver();
+            } else {
+                timer -= 1;
+                updateTimer();
+            }
+        }
+        let score = 0;
+        function updateScore(target) {
+            score += Number(target.dataset.points)
+            let scoreEl = document.getElementById('high-score');
+            scoreEl.innerText = `High Score: ${score}`
+        }
+
+        function gameOver() {
+            clearInterval(intervalId);
+            alert("Game Over");
+        }
+        function updateTimer() {
+            let clockEl = document.getElementById('clock');
+            clockEl.innerText = `Time: ${timer} seconds`;
+        }
+        let target = document.getElementById('target-1');
+        randomLocation(target);
+        function randomLocation(target) {
+            console.log(target.style.top);
+            target.style.top = Math.max(0, Math.random() * 400 - target.offsetHeight) + 'px';
+            console.log(target.style.top);
+            target.style.left = Math.max(0, Math.random() * 400 - target.offsetWidth) + 'px';
+        }
+        
+        function randomColorSize(target) {
+            let rando = Math.floor(Math.random() * 5);
+            if(rando == 0) {
+                target.style.backgroundColor = 'green';
+                target.style.height = '60px';
+                target.style.width = '60px';
+            } else if (rando == 1) {
+                target.style.backgroundColor = 'blue';
+                target.style.height = '50px';
+                target.style.width = '50px';
+            } else if (rando == 2) {
+                target.style.backgroundColor = 'yellow';
+                target.style.height = '40px';
+                target.style.width = '40px';
+            } else if (rando == 3) {
+                target.style.backgroundColor = 'orange';
+                target.style.height = '30px';
+                target.style.width = '30px';
+            } else if (rando == 4) {
+                target.style.backgroundColor = 'red';
+                target.style.height = '20px';
+                target.style.width = '20px';
+            }
+        }
+        let targetAttributes = [
+            {
+                color: 'green',
+                size: '60px',
+                points: 1,
+            },
+            {
+                color: 'blue',
+                size: '50px',
+                points: 2,   
+            }
+        ]
+        function randomizeTarget(target) {
+            let random = Math.floor(Math.random() * targetAttributes.length)
+            let attributes = targetAttributes[random];
+            target.style.backgroundColor = attributes.color;
+            target.style.height = target.style.width = attributes.size;
+            target.dataset.points = attributes.points
+        }
+        
+        function handleClick(event) {
+            updateScore(event.target);
+            randomLocation(event.target);
+            randomizeTarget(event.target);
+        }
+        document.getElementById('target-1').addEventListener('click', handleClick);
+        randomizeTarget(target);
+    </script>
+    <script src="Game.js"></script>
+    
+</body>
+
+</html>
