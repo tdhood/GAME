@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <button type="button" onclick="startGame()">START!</button>
+    <button id="startButton" type="button">START!</button>
+    <button id="resetButton" type="button" disabled>Reset</button>
     <div id="info-header" style="border: 1px solid black; width: 400px; margin-bottom: 10px;">
         <span id="high-score" style="display: inline-block; margin: 5px 10px;">Current Score: 0</span>
         <span id="clock" style="display: inline-block; margin: 5px 10px;">Time: 30 seconds</span> 
@@ -21,12 +22,22 @@
         </div>
     </div>
     <script>
+        const GAME_TIME = 5;
+        let timer = GAME_TIME;
         let intervalId;
-
-        function startGame() {
-            intervalId = setInterval(tick, 1000);
+        function initializeGameState() {
+            timer = GAME_TIME;
         }
-        let timer = 30;
+        function startGame(evt) {
+            intervalId = setInterval(tick, 1000);
+            evt.target.disabled = true;
+            document
+                .getElementById('target-1')
+                .addEventListener('click', handleClick);
+            document
+                .getElementById('resetButton')
+                .addEventListener('click', startGame);
+        }
         function tick() {
             if (!timer) {
                 gameOver();
@@ -44,6 +55,13 @@
 
         function gameOver() {
             clearInterval(intervalId);
+            document.getElementById('startButton').disabled = false;
+            document
+                .getElementById('target-1')
+                .removeEventListener('click', handleClick);
+            document
+                .getElementById('resetButton')
+                .removeEventListener('click', startGame);    
             alert("Game Over");
         }
         function updateTimer() {
@@ -51,7 +69,6 @@
             clockEl.innerText = `Time: ${timer} seconds`;
         }
         let target = document.getElementById('target-1');
-        randomLocation(target);
         function randomLocation(target) {
             console.log(target.style.top);
             target.style.top = Math.max(0, Math.random() * 400 - target.offsetHeight) + 'px';
@@ -96,11 +113,12 @@
         
         function handleClick(event) {
             updateScore(event.target);
-            randomLocation(event.target);
             randomizeTarget(event.target);
+            randomLocation(event.target);
         }
-        document.getElementById('target-1').addEventListener('click', handleClick);
+        document.getElementById('startButton').addEventListener('click', startGame);
         randomizeTarget(target);
+        randomLocation(target);
     </script>
     <script src="Game.js"></script>
     
